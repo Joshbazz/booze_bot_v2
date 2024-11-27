@@ -34,7 +34,7 @@ class WhiskeyScraper:
         self.wait = None
         
     def setup_driver(self, headless=False):
-        """Set up Selenium WebDriver with required options."""
+        """Set up Selenium WebDriver with required options and more robust error handling."""
         chrome_options = Options()
         
         # Basic configuration
@@ -62,31 +62,32 @@ class WhiskeyScraper:
             chrome_options.add_argument("--disable-dev-shm-usage")
 
         try:
-            # Use ChromeDriverManager to handle driver installation
+            # Explicitly specify Chrome path and use absolute path for ChromeDriver
+            chrome_path = "/usr/bin/google-chrome"  # Typical path on Amazon Linux
+            driver_path = "/usr/local/bin/chromedriver"  # Typical path for manually installed ChromeDriver
+            
+            service = ChromeService(executable_path=driver_path)
+            
             self.driver = webdriver.Chrome(
-                service=ChromeService(ChromeDriverManager().install()),
+                service=service,
                 options=chrome_options
             )
             
-            # Set up WebDriverWait for explicit waits
-            self.wait = WebDriverWait(self.driver, 10)
+            # Increase timeout and add connection retries
+            self.driver.set_page_load_timeout(30)  # 30 seconds page load timeout
+            
+            # Set up WebDriverWait for explicit waits with increased timeout
+            self.wait = WebDriverWait(self.driver, 15)
             
             # Additional anti-detection measures
             self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
             
         except Exception as e:
             logging.error(f"Failed to initialize Chrome driver: {e}")
+            # Add more detailed error logging
+            logging.error(f"Chrome path: {chrome_path}")
+            logging.error(f"Driver path: {driver_path}")
             raise
-
-    def wait_and_click(self, by, selector):
-        """Wait for an element to be clickable and click it."""
-        try:
-            element = self.wait.until(EC.element_to_be_clickable((by, selector)))
-            element.click()
-            return True
-        except Exception as e:
-            logging.warning(f"Failed to click element {selector}: {e}")
-            return False
 
     def scrape_page_once(self):
         """Scrape the whiskey release page once."""
