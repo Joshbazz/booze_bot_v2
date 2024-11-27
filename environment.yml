@@ -1,0 +1,17 @@
+name: booze_bot_environment
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.13
+  - beautifulsoup4
+  - python-dotenv
+  - selenium
+  - pip
+  - asyncio
+  - webdriver-manager
+  - pip:
+    - discord.py==2.4.0
+    - webdriver_manager
+    - selenium-stealth
+prefix: /opt/anaconda3/envs/booze_bot

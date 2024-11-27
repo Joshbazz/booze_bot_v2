@@ -1,0 +1,7 @@
+# Delete the old requirements.txt and create a new one with these contents:
+beautifulsoup4==4.12.3
+discord.py==2.4.0
+python-dotenv==1.0.1
+selenium==4.27.0
+webdriver-manager==4.0.1
+selenium-stealth==1.0.6
