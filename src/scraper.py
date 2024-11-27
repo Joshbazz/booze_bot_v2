@@ -91,7 +91,7 @@ class WhiskeyScraper:
     def scrape_page_once(self):
         """Scrape the whiskey release page once."""
         if not self.driver:
-            self.setup_driver()
+            self.setup_driver(headless=True)
             
         try:
             # Navigate to main page with explicit wait
