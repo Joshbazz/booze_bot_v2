@@ -34,60 +34,60 @@ class WhiskeyScraper:
         self.wait = None
         
     def setup_driver(self, headless=False):
-        """Set up Selenium WebDriver with required options and more robust error handling."""
-        chrome_options = Options()
-        
-        # Basic configuration
-        chrome_options.add_argument("--start-maximized")
-        chrome_options.add_argument("--window-size=1920,1080")
-        
-        # Anti-detection measures
-        chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-        chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        chrome_options.add_experimental_option("useAutomationExtension", False)
-        
-        # User agent and headers
-        chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
-        chrome_options.add_argument("accept=text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
-        chrome_options.add_argument("accept-language=en-US,en;q=0.5")
-        
-        # Security configurations
-        chrome_options.add_argument("--ignore-certificate-errors")
-        chrome_options.add_argument("--allow-insecure-localhost")
-        
-        if headless:
-            chrome_options.add_argument("--headless=new")
-            chrome_options.add_argument("--disable-gpu")
-            chrome_options.add_argument("--no-sandbox")
-            chrome_options.add_argument("--disable-dev-shm-usage")
+            """Set up Selenium WebDriver with required options."""
+            chrome_options = Options()
+            
+            # Basic configuration
+            chrome_options.add_argument("--start-maximized")
+            chrome_options.add_argument("--window-size=1920,1080")
+            
+            # Anti-detection measures
+            chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+            chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            chrome_options.add_experimental_option("useAutomationExtension", False)
+            
+            # User agent and headers
+            chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+            chrome_options.add_argument("accept=text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+            chrome_options.add_argument("accept-language=en-US,en;q=0.5")
+            
+            # Security configurations
+            chrome_options.add_argument("--ignore-certificate-errors")
+            chrome_options.add_argument("--allow-insecure-localhost")
+            
+            if headless:
+                chrome_options.add_argument("--headless=new")
+                chrome_options.add_argument("--disable-gpu")
+                chrome_options.add_argument("--no-sandbox")
+                chrome_options.add_argument("--disable-dev-shm-usage")
 
-        try:
-            # Explicitly specify Chrome path and use absolute path for ChromeDriver
-            chrome_path = "/usr/bin/google-chrome"  # Typical path on Amazon Linux
-            driver_path = "/usr/local/bin/chromedriver"  # Typical path for manually installed ChromeDriver
-            
-            service = ChromeService(executable_path=driver_path)
-            
-            self.driver = webdriver.Chrome(
-                service=service,
-                options=chrome_options
-            )
-            
-            # Increase timeout and add connection retries
-            self.driver.set_page_load_timeout(30)  # 30 seconds page load timeout
-            
-            # Set up WebDriverWait for explicit waits with increased timeout
-            self.wait = WebDriverWait(self.driver, 15)
-            
-            # Additional anti-detection measures
-            self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-            
-        except Exception as e:
-            logging.error(f"Failed to initialize Chrome driver: {e}")
-            # Add more detailed error logging
-            logging.error(f"Chrome path: {chrome_path}")
-            logging.error(f"Driver path: {driver_path}")
-            raise
+            try:
+                # Explicitly specify Chrome path and use absolute path for ChromeDriver
+                driver_path = "/usr/local/bin/chromedriver"
+                
+                # Create Service object with explicit path
+                service = Service(executable_path=driver_path)
+                
+                # Instantiate Chrome WebDriver with explicit service
+                self.driver = webdriver.Chrome(
+                    service=service,
+                    options=chrome_options
+                )
+                
+                # Increase timeout and add connection retries
+                self.driver.set_page_load_timeout(30)  # 30 seconds page load timeout
+                
+                # Set up WebDriverWait for explicit waits with increased timeout
+                self.wait = WebDriverWait(self.driver, 15)
+                
+                # Additional anti-detection measures
+                self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+                
+            except Exception as e:
+                logging.error(f"Failed to initialize Chrome driver: {e}")
+                # Add more detailed error logging
+                logging.error(f"Driver path: {driver_path}")
+                raise
 
     def scrape_page_once(self):
         """Scrape the whiskey release page once."""
