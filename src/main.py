@@ -1,7 +1,7 @@
 import os
 import asyncio
 import threading
-from scraper import WhiskeyScraper
+from claude_scraper import WhiskeyScraper
 from discord_bot import WhiskeyBot
 
 from dotenv import load_dotenv
