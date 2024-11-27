@@ -8,7 +8,7 @@
 
 ### Setting up the environment
 ```bash
-# Create a new virtual environment
+# Create a new virtual environment with venv (recommended)
 python3 -m venv venv
 
 # Activate the virtual environment
@@ -40,33 +40,24 @@ deactivate
 rm -rf venv
 ```
 
-## Chrome Driver Architecture Notes
-The Chrome driver architecture (ARM vs x86) won't pose a problem for your setup because:
-1. The driver is downloaded dynamically based on your system's architecture
-2. When running locally on your Mac (ARM), it will download the ARM-compatible driver
-3. When deployed to EC2 (x86), it will download the x86-compatible driver
-4. Selenium manager handles this compatibility automatically
-
-## Best Practices
-- Always activate the virtual environment before working on the project
-- Keep `requirements.txt` updated using `pip freeze > requirements.txt`
-- Commit `requirements.txt` to version control, but not the `venv` directory
-
-## Troubleshooting
-If you encounter issues:
-1. Ensure you're using the correct Python version
-2. Verify the virtual environment is activated
-3. Try removing and recreating the virtual environment
-4. Check Chrome and Chrome driver versions match
-
-## Common Commands Reference
+## Keeping screen active in background
 ```bash
-# Update pip in virtual environment
-pip install --upgrade pip
+# To run a screen and detach, you can create a screen instance
+screen -S whiskey_scraper
 
-# Generate requirements.txt
-pip freeze > requirements.txt
+# Inside the new screen session, activate your virtual environment (if needed) and run your script:
+source venv/bin/activate
+python src/main.py
 
-# Update all packages
-pip install -r requirements.txt --upgrade
+# To detach from the screen session without stopping the script, press:
+Ctrl + A, then D
+
+# If you need to return to the session later, reattach it using:
+screen -r whiskey_scraper
+```
+
+### SSH Back Into the EC2 Instance
+```bash
+# Run the following to SSH back into the EC2 Instance:
+ssh -i "~/.ssh/booze_bot_key.pem" ec2-user@ec2-3-133-160-250.us-east-2.compute.amazonaws.com
 ```
